@@ -36,6 +36,17 @@ export function strikeForDelta(kind: OptionKind, s: number, absDelta: number, t:
   return s * Math.exp(-d1 * sigma * Math.sqrt(t) + (r + 0.5 * sigma * sigma) * t);
 }
 
+/**
+ * Implied vol at a given strike. Moneyness is measured in standard deviations
+ * so the smile flattens naturally for longer expiries. A positive skew makes
+ * downside strikes dearer and upside strikes cheaper, as on equity indexes.
+ */
+export function skewedVol(atm: number, s: number, k: number, t: number, skew: number): number {
+  if (skew === 0 || t <= 0) return atm;
+  const x = Math.log(k / s) / (Math.max(atm, 1e-4) * Math.sqrt(t));
+  return atm * Math.min(2, Math.max(0.5, 1 - skew * x));
+}
+
 /** Listed strikes come in increments that grow with the share price. */
 export function strikeStep(s: number): number {
   if (s < 25) return 0.5;

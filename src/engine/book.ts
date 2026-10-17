@@ -1,4 +1,4 @@
-import { bsPrice, type OptionKind } from "./blackScholes";
+import { bsPrice, skewedVol, type OptionKind } from "./blackScholes";
 import { TRADING_DAYS } from "./math";
 import type { Params } from "./types";
 
@@ -43,7 +43,9 @@ export class Book {
 
   legValue(leg: OptionLeg, t: number): number {
     const remaining = Math.max(leg.expiry - t, 0) / TRADING_DAYS;
-    return bsPrice(leg.kind, this.prices[t], leg.strike, remaining, this.p.riskFree, this.iv[t]);
+    const s = this.prices[t];
+    const vol = skewedVol(this.iv[t], s, leg.strike, remaining, this.p.skew);
+    return bsPrice(leg.kind, s, leg.strike, remaining, this.p.riskFree, vol);
   }
 
   equity(t: number): number {

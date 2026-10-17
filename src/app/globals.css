@@ -12,6 +12,17 @@
   --gain: #2f6b4a;
   --loss: #b0412e;
   --highlight: #f1d98a;
+  --s-hold: #1c1a16;
+  --s-coveredCall: #b0412e;
+  --s-cashPut: #2f6b4a;
+  --s-wheel: #b07d12;
+  --s-putSpread: #6b4c9a;
+  --s-collar: #2a5d8f;
+  --s-marriedPut: #6f7f8c;
+  --s-dca: #8c5a3c;
+  --s-trend: #2f8580;
+  --s-levered: #d0602a;
+  --s-cash: #9a9483;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,6 +38,17 @@
     --gain: #7fbf96;
     --loss: #e0745d;
     --highlight: #5a4a1c;
+    --s-hold: #ece5d3;
+    --s-coveredCall: #e0745d;
+    --s-cashPut: #7fbf96;
+    --s-wheel: #e2b04a;
+    --s-putSpread: #b49ae0;
+    --s-collar: #7fb0e0;
+    --s-marriedPut: #a9b7c2;
+    --s-dca: #cf9a74;
+    --s-trend: #6fcfc7;
+    --s-levered: #f08a52;
+    --s-cash: #8a8475;
   }
 }
 
