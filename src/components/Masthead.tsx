@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
 
 const noop = () => () => {};
@@ -10,7 +12,13 @@ function issueNumber(d: Date) {
   return Math.max(1, Math.floor((d.getTime() - start) / 86_400_000) + 1);
 }
 
+const SECTIONS = [
+  { href: "/", label: "The desk", note: "Run the comparison" },
+  { href: "/guide", label: "The guide", note: "Why it exists and how each strategy works" },
+];
+
 export function Masthead() {
+  const path = usePathname();
   // The server prints no date, so a cached page never shows a stale one.
   const stamp = useSyncExternalStore(noop, today, () => null);
   const now = stamp ? new Date(stamp) : null;
@@ -23,14 +31,30 @@ export function Masthead() {
         <span>Not investment advice</span>
       </div>
       <div className="flex flex-col items-center py-4 sm:py-6">
-        <h1 className="text-[clamp(3.2rem,11vw,7.5rem)] font-semibold leading-[0.85] tracking-[-0.035em]" style={{ fontVariationSettings: '"opsz" 72' }}>
+        <Link href="/" className="text-[clamp(3.2rem,11vw,7.5rem)] font-semibold leading-[0.85] tracking-[-0.035em]" style={{ fontVariationSettings: '"opsz" 72' }}>
           Compario
-        </h1>
+        </Link>
         <p className="mt-3 text-center text-[1.02rem] italic text-ink-soft sm:text-lg">
           The working trader&rsquo;s gazette of strategies, tested side by side on the same tape.
         </p>
       </div>
       <div className="rule-double" />
+      <nav aria-label="Sections" className="flex justify-center gap-6 border-b border-rule py-2 sm:gap-10">
+        {SECTIONS.map((s) => {
+          const active = path === s.href;
+          return (
+            <Link
+              key={s.href}
+              href={s.href}
+              aria-current={active ? "page" : undefined}
+              className={`group flex items-baseline gap-2 ${active ? "text-accent" : "text-ink hover:text-accent"}`}
+            >
+              <span className={`kicker ${active ? "underline decoration-1 underline-offset-[6px]" : ""}`}>{s.label}</span>
+              <span className="hidden text-[0.85rem] italic text-ink-faint md:inline">{s.note}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </header>
   );
 }

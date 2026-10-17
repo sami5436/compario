@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { catalog, catalogById } from "@/engine/catalog";
 import type { RunOutput } from "@/engine/run";
@@ -113,6 +114,17 @@ export function Workbench() {
   return (
     <div className="mx-auto max-w-[1320px] px-4 pb-16 sm:px-6">
       <Masthead />
+
+      <section className="mt-5 grid gap-4 border-b border-ink pb-5 md:grid-cols-[1fr_auto] md:items-end">
+        <p className="max-w-[78ch] text-[1.05rem] leading-relaxed text-ink-soft">
+          <span className="kicker mr-2 text-accent">New here?</span>
+          Options sellers promise steady income and trend followers promise to dodge crashes. Compario replays eleven ways to own a stock on the same
+          prices, with the same money and the same costs, so you can see what each one really earned and what it risked to get there.
+        </p>
+        <Link href="/guide" className="kicker self-start border border-ink px-3 py-2 text-center hover:bg-ink hover:text-paper md:self-end">
+          Read the guide
+        </Link>
+      </section>
 
       <div className="mt-6 grid gap-x-10 gap-y-8 lg:grid-cols-[300px_minmax(0,1fr)]">
         <aside className="order-2 lg:order-1">
