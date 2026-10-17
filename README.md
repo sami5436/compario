@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Compario
 
-## Getting Started
+Eleven ways to own a stock, tested side by side on the same tape.
 
-First, run the development server:
+Compario replays buy and hold, covered calls, cash secured puts, the wheel, bull put spreads, collars, married puts, dollar cost averaging, trend following, daily leverage and Treasury bills against either real price history or thousands of simulated markets, then ranks them on return, drawdown, Sharpe, Sortino and more.
+
+## Markets
+
+* **History** plays back actual daily closes (adjusted for splits and dividends) for any ticker.
+* **Reshuffled** block bootstraps a ticker's real daily returns into many alternate futures.
+* **Synthetic** runs geometric Brownian motion with sudden shocks, using drift, volatility and crash settings you choose.
+
+## How options are priced
+
+Free historical option chains do not exist, so every option is priced with Black Scholes. Implied vol is trailing realized vol times a premium you set, tilted by a simple skew so downside puts cost more than upside calls. Fills lose a share of the mid price to the spread, and commissions are charged per contract. The fine print section on the site lists what the model leaves out.
+
+## Running it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # http://localhost:3000
+npm test        # engine tests
+npm run check   # types, lint, tests and the long dash check
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The engine lives in `src/engine` and runs in a Web Worker, so even a thousand market Monte Carlo keeps the page responsive. Prices come from `src/app/api/prices`, a small route that proxies Yahoo's daily chart endpoint and caches the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Settings live in the address bar, so any run can be shared as a link.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built with Next.js, React and TypeScript. Not investment advice.

@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "dashes": "node scripts/check-dashes.mjs",
+    "check": "tsc --noEmit && eslint src && vitest run && node scripts/check-dashes.mjs"
   },
   "dependencies": {
     "next": "16.4.2",
