@@ -27,10 +27,10 @@ export async function GET(request: NextRequest) {
   const from = params.get("from") ?? "";
   const to = params.get("to") ?? "";
   if (!SYMBOL.test(symbol)) return fail("That does not look like a ticker symbol.", 400);
-  if (!DATE.test(from) || !DATE.test(to)) return fail("Dates must look like 2015-01-31.", 400);
+  if (!DATE.test(from) || (to !== "" && !DATE.test(to))) return fail("Dates must look like 2015-01-31.", 400);
 
   const start = Math.floor(Date.parse(`${from}T00:00:00Z`) / 1000);
-  const end = Math.floor(Date.parse(`${to}T23:59:59Z`) / 1000);
+  const end = to ? Math.floor(Date.parse(`${to}T23:59:59Z`) / 1000) : Math.floor(Date.now() / 1000);
   if (!(end > start)) return fail("The end date has to come after the start date.", 400);
 
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?period1=${start}&period2=${end}&interval=1d&events=div%2Csplit`;

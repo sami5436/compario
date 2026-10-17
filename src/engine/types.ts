@@ -21,6 +21,8 @@ export interface Params {
   /** Implied vol is modelled as trailing realized vol times this multiplier. */
   ivMultiplier: number;
   ivFloor: number;
+  /** Relative change in implied vol per standard deviation of moneyness. */
+  skew: number;
   volLookback: number;
   /** Calendar days to expiration for each option cycle. */
   dte: number;
@@ -70,6 +72,7 @@ export const defaultParams: Params = {
   slippage: 0.03,
   ivMultiplier: 1.15,
   ivFloor: 0.1,
+  skew: 0.3,
   volLookback: 30,
   dte: 30,
   callDelta: 0.3,

@@ -41,6 +41,8 @@ export interface StrategyResult {
   assignments: number;
   cycles: number;
   exposure: number;
+  /** Calendar year returns, aligned with RunOutput.years. Only for a real history. */
+  yearly: number[];
 }
 
 export interface RunOutput {
@@ -51,6 +53,8 @@ export interface RunOutput {
   /** Calendar dates of plotted points for a real history, otherwise null. */
   dates: string[] | null;
   underlying: Band;
+  /** Calendar years covered by a real history, otherwise empty. */
+  years: string[];
   results: StrategyResult[];
   elapsedMs: number;
 }
@@ -77,6 +81,20 @@ function band(rows: Float64Array[], width: number): Band {
   return { p10, p50, p90 };
 }
 
+/** Last day index of each calendar year, plus the first day as the opening mark. */
+function yearMarks(dates: string[]): { labels: string[]; ends: number[] } {
+  const labels: string[] = [];
+  const ends: number[] = [];
+  for (let i = 0; i < dates.length; i++) {
+    const y = dates[i].slice(0, 4);
+    if (i === dates.length - 1 || dates[i + 1].slice(0, 4) !== y) {
+      labels.push(y);
+      ends.push(i);
+    }
+  }
+  return { labels, ends };
+}
+
 function median(values: number[]): number {
   return percentile([...values].sort((a, b) => a - b), 0.5);
 }
@@ -98,11 +116,13 @@ export function runBacktest(input: RunInput): RunOutput {
   const sampled = (series: ArrayLike<number>) => Float64Array.from(index, (i) => series[i]);
   const underlyingRows = paths.map((path) => sampled(Array.from(path, (v) => (v / path[0]) * params.capital)));
 
-  type Acc = { metrics: Metrics[]; equity: Float64Array[]; drawdown: Float64Array[]; finals: number[]; premium: number; fees: number; assignments: number; cycles: number; exposure: number };
+  const marks = market.kind === "history" ? yearMarks(market.dates) : { labels: [], ends: [] };
+  type Acc = { yearly: number[]; metrics: Metrics[]; equity: Float64Array[]; drawdown: Float64Array[]; finals: number[]; premium: number; fees: number; assignments: number; cycles: number; exposure: number };
   const acc = new Map<StrategyId, Acc>();
-  for (const id of ids) acc.set(id, { metrics: [], equity: [], drawdown: [], finals: [], premium: 0, fees: 0, assignments: 0, cycles: 0, exposure: 0 });
+  for (const id of ids) acc.set(id, { yearly: [], metrics: [], equity: [], drawdown: [], finals: [], premium: 0, fees: 0, assignments: 0, cycles: 0, exposure: 0 });
 
   const holdFinals: number[] = [];
+  const count1 = paths.length;
   for (const path of paths) {
     const iv = impliedVolSeries(path, params.volLookback, params.ivMultiplier, params.ivFloor);
     for (const id of ids) {
@@ -117,6 +137,14 @@ export function runBacktest(input: RunInput): RunOutput {
       a.assignments += run.assignments;
       a.cycles += run.cycles;
       a.exposure += run.exposure;
+      if (count1 === 1) {
+        let prev = run.equity[0];
+        a.yearly = marks.ends.map((end) => {
+          const r = prev > 0 ? run.equity[end] / prev - 1 : 0;
+          prev = run.equity[end];
+          return r;
+        });
+      }
       if (id === "hold") holdFinals.push(run.equity[days - 1]);
     }
   }
@@ -144,6 +172,7 @@ export function runBacktest(input: RunInput): RunOutput {
       assignments: a.assignments / count,
       cycles: a.cycles / count,
       exposure: a.exposure / count,
+      yearly: a.yearly,
     });
   }
 
@@ -153,6 +182,7 @@ export function runBacktest(input: RunInput): RunOutput {
     index,
     dates: market.kind === "history" ? index.map((i) => market.dates[i]) : null,
     underlying: band(underlyingRows, index.length),
+    years: marks.labels,
     results,
     elapsedMs: performance.now() - started,
   };
