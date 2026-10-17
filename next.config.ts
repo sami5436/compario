@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
+const fonts = ["./assets/fonts/**/*"];
+
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
@@ -11,6 +12,11 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  // The share card reads its fonts from disk, so ship them with those functions.
+  outputFileTracingIncludes: {
+    "/opengraph-image": fonts,
+    "/twitter-image": fonts,
   },
 };
 
