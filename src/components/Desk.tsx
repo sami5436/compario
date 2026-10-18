@@ -1,29 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { ERAS, POPULAR_TICKERS as TICKERS } from "@/lib/periods";
 import type { MarketMode, Settings } from "@/lib/settings";
 import { NumberField, Section, Segmented, Toggle } from "./fields";
 
 type Patch = (p: Partial<Settings>) => void;
-
-const TICKERS = ["SPY", "QQQ", "AAPL", "NVDA", "TSLA", "KO", "IWM"];
-
-function yearsAgo(n: number) {
-  const d = new Date();
-  d.setFullYear(d.getFullYear() - n);
-  return d.toISOString().slice(0, 10);
-}
-const latest = () => "";
-
-const ERAS: { label: string; from: () => string; to: () => string }[] = [
-  { label: "5 years", from: () => yearsAgo(5), to: latest },
-  { label: "10 years", from: () => yearsAgo(10), to: latest },
-  { label: "20 years", from: () => yearsAgo(20), to: latest },
-  { label: "Financial crisis", from: () => "2007-10-01", to: () => "2011-12-31" },
-  { label: "Lost decade", from: () => "2000-01-01", to: () => "2010-12-31" },
-  { label: "Pandemic", from: () => "2020-01-01", to: () => "2021-12-31" },
-  { label: "2022 bear", from: () => "2022-01-01", to: () => "2023-06-30" },
-];
 
 function TickerInput({ value, onCommit }: { value: string; onCommit: (v: string) => void }) {
   const [draft, setDraft] = useState<string | null>(null);

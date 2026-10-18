@@ -5,12 +5,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { catalog, catalogById } from "@/engine/catalog";
 import type { RunOutput } from "@/engine/run";
 import { longDate, money, pct, signedPct } from "@/lib/format";
+import { ERAS } from "@/lib/periods";
 import { defaultSettings, fromQuery, toQuery, type Settings } from "@/lib/settings";
 import { tellStory } from "@/lib/story";
 import { useBacktest, type Status } from "@/lib/useBacktest";
 import { Desk } from "./Desk";
 import { Distribution } from "./Distribution";
 import { Masthead } from "./Masthead";
+import { TickerSearch } from "./TickerSearch";
 import { Methodology } from "./Methodology";
 import { Roster } from "./Roster";
 import { Standings } from "./Standings";
@@ -115,15 +117,40 @@ export function Workbench() {
     <div className="mx-auto max-w-[1320px] px-4 pb-16 sm:px-6">
       <Masthead />
 
+      <section aria-label="Quick ticker search" className="mt-4 border-b border-ink pb-4 lg:hidden">
+        <TickerSearch
+          value={settings.mode === "simulated" ? "" : settings.symbol}
+          onSubmit={(symbol) => set({ symbol, mode: settings.mode === "simulated" ? "history" : settings.mode })}
+        />
+        <div className="mt-1 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+          {ERAS.map((era) => (
+            <button
+              key={era.label}
+              type="button"
+              onClick={() => set({ from: era.from(), to: era.to(), mode: settings.mode === "simulated" ? "history" : settings.mode })}
+              className="shrink-0 border border-rule px-2.5 py-1 text-[0.8rem] italic text-ink-soft"
+            >
+              {era.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-1 text-[0.78rem] italic text-ink-faint">Every other setting lives on the desk further down.</p>
+      </section>
+
       <section className="mt-5 grid gap-4 border-b border-ink pb-5 md:grid-cols-[1fr_auto] md:items-end">
         <p className="max-w-[78ch] text-[1.05rem] leading-relaxed text-ink-soft">
           <span className="kicker mr-2 text-accent">New here?</span>
           Options sellers promise steady income and trend followers promise to dodge crashes. Compario replays eleven ways to own a stock on the same
           prices, with the same money and the same costs, so you can see what each one really earned and what it risked to get there.
         </p>
-        <Link href="/guide" className="kicker self-start border border-ink px-3 py-2 text-center hover:bg-ink hover:text-paper md:self-end">
-          Read the guide
-        </Link>
+        <div className="flex gap-2 self-start md:self-end">
+          <Link href="/tldr" className="kicker border border-ink bg-ink px-3 py-2 text-center text-paper hover:bg-transparent hover:text-ink">
+            Just the numbers
+          </Link>
+          <Link href="/guide" className="kicker border border-ink px-3 py-2 text-center hover:bg-ink hover:text-paper">
+            Read the guide
+          </Link>
+        </div>
       </section>
 
       <div className="mt-6 grid gap-x-10 gap-y-8 lg:grid-cols-[300px_minmax(0,1fr)]">
