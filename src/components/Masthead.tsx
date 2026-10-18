@@ -13,6 +13,7 @@ function issueNumber(d: Date) {
 }
 
 const SECTIONS = [
+  { href: "/tldr", label: "TL;DR", note: "Just the numbers" },
   { href: "/", label: "The desk", note: "Run the comparison" },
   { href: "/guide", label: "The guide", note: "Why it exists and how each strategy works" },
 ];
@@ -39,7 +40,7 @@ export function Masthead() {
         </p>
       </div>
       <div className="rule-double" />
-      <nav aria-label="Sections" className="flex justify-center gap-6 border-b border-rule py-2 sm:gap-10">
+      <nav aria-label="Sections" className="flex justify-center gap-5 border-b border-rule py-2 sm:gap-10">
         {SECTIONS.map((s) => {
           const active = path === s.href;
           return (
